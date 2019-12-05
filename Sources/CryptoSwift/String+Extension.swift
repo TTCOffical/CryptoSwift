@@ -16,7 +16,7 @@
 /** String extension */
 extension String {
   public var bytes: Array<UInt8> {
-    data(using: String.Encoding.utf8, allowLossyConversion: true)?.bytes ?? Array(utf8)
+    data(using: String.Encoding.utf8, allowLossyConversion: true)?.cyptoBytes ?? Array(utf8)
   }
 
   public func md5() -> String {
