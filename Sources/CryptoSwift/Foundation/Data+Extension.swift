@@ -16,80 +16,77 @@
 import Foundation
 
 extension Data {
-    /// Two octet checksum as defined in RFC-4880. Sum of all octets, mod 65536
-    public func checksum() -> UInt16 {
-        var s: UInt32 = 0
-        var bytesArray = cyptoBytes
-        for i in 0 ..< bytesArray.count {
-            s = s + UInt32(bytesArray[i])
-        }
-        s = s % 65536
-        return UInt16(s)
+  /// Two octet checksum as defined in RFC-4880. Sum of all octets, mod 65536
+  public func checksum() -> UInt16 {
+    let s = self.withUnsafeBytes { buf in
+        return buf.lazy.map(UInt32.init).reduce(UInt32(0), +)
     }
+    return UInt16(s % 65535)
+  }
 
-    public func md5() -> Data {
-        return Data(_: Digest.md5(cyptoBytes))
-    }
+  public func md5() -> Data {
+    Data( Digest.md5(cyptoBytes))
+  }
 
-    public func sha1() -> Data {
-        return Data(_: Digest.sha1(cyptoBytes))
-    }
+  public func sha1() -> Data {
+    Data( Digest.sha1(cyptoBytes))
+  }
 
-    public func sha224() -> Data {
-        return Data(_: Digest.sha224(cyptoBytes))
-    }
+  public func sha224() -> Data {
+    Data( Digest.sha224(cyptoBytes))
+  }
 
-    public func sha256() -> Data {
-        return Data(_: Digest.sha256(cyptoBytes))
-    }
+  public func sha256() -> Data {
+    Data( Digest.sha256(cyptoBytes))
+  }
 
-    public func sha384() -> Data {
-        return Data(_: Digest.sha384(cyptoBytes))
-    }
+  public func sha384() -> Data {
+    Data( Digest.sha384(cyptoBytes))
+  }
 
-    public func sha512() -> Data {
-        return Data(_: Digest.sha512(cyptoBytes))
-    }
+  public func sha512() -> Data {
+    Data( Digest.sha512(cyptoBytes))
+  }
 
-    public func sha3(_ variant: SHA3.Variant) -> Data {
-        return Data(_: Digest.sha3(cyptoBytes, variant: variant))
-    }
+  public func sha3(_ variant: SHA3.Variant) -> Data {
+    Data( Digest.sha3(cyptoBytes, variant: variant))
+  }
 
-    public func crc32(seed: UInt32? = nil, reflect: Bool = true) -> Data {
-        return Data(_: Checksum.crc32(cyptoBytes, seed: seed, reflect: reflect).bytes())
-    }
+  public func crc32(seed: UInt32? = nil, reflect: Bool = true) -> Data {
+    Data( Checksum.crc32(cyptoBytes, seed: seed, reflect: reflect).bytes())
+  }
 
-    public func crc32c(seed: UInt32? = nil, reflect: Bool = true) -> Data {
-        return Data(_: Checksum.crc32c(cyptoBytes, seed: seed, reflect: reflect).bytes())
-    }
+  public func crc32c(seed: UInt32? = nil, reflect: Bool = true) -> Data {
+    Data( Checksum.crc32c(cyptoBytes, seed: seed, reflect: reflect).bytes())
+  }
 
-    public func crc16(seed: UInt16? = nil) -> Data {
-        return Data(_: Checksum.crc16(cyptoBytes, seed: seed).bytes())
-    }
+  public func crc16(seed: UInt16? = nil) -> Data {
+    Data( Checksum.crc16(cyptoBytes, seed: seed).bytes())
+  }
 
-    public func encrypt(cipher: Cipher) throws -> Data {
-        return Data(_: try cipher.encrypt(cyptoBytes.slice))
-    }
+  public func encrypt(cipher: Cipher) throws -> Data {
+    Data( try cipher.encrypt(cyptoBytes.slice))
+  }
 
-    public func decrypt(cipher: Cipher) throws -> Data {
-        return Data(_: try cipher.decrypt(cyptoBytes.slice))
-    }
+  public func decrypt(cipher: Cipher) throws -> Data {
+    Data( try cipher.decrypt(cyptoBytes.slice))
+  }
 
-    public func authenticate(with authenticator: Authenticator) throws -> Data {
-        return Data(_: try authenticator.authenticate(cyptoBytes))
-    }
+  public func authenticate(with authenticator: Authenticator) throws -> Data {
+    Data( try authenticator.authenticate(cyptoBytes))
+  }
 }
 
 extension Data {
-    public init(hex: String) {
-        self.init(Array<UInt8>(hex: hex))
-    }
+  public init(hex: String) {
+    self.init(Array<UInt8>(hex: hex))
+  }
 
-    public var cyptoBytes: Array<UInt8> {
-        return Array(self)
-    }
+  public var cyptoBytes: Array<UInt8> {
+    Array(self)
+  }
 
-    public func toHexString() -> String {
-        return cyptoBytes.toHexString()
-    }
+  public func toHexString() -> String {
+    self.cyptoBytes.toHexString()
+  }
 }
